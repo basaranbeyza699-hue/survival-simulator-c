@@ -1,0 +1,123 @@
+#include <stdio.h>
+
+// Oyuncu durum değişkenleri
+int health = 100;
+int energy = 100;
+int food = 0;
+int shelter = 0;
+
+// Durumu ekrana yazdıran fonksiyon
+void showStatus() {
+    printf("Durum -> Saglik:%d Enerji:%d Yemek:%d Siginak:%s\n",
+           health, energy, food, shelter ? "Var" : "Yok");
+}
+
+// Avlanma fonksiyonu
+void hunt() {
+    energy -= 10;   // Enerji azalır
+    if (energy < 0) energy = 0;
+
+    // Basit mantık: enerji yeterliyse yemek bulunur
+    if (energy > 20) {
+        food++;
+        printf("Avlandiniz! Enerji -10, Yemek +1\n");
+    } else {
+        health -= 5;
+        printf("Av basarisiz! Enerji dusuk, Saglik -5\n");
+    }
+    showStatus();
+}
+
+// Sığınak arama fonksiyonu
+void findShelter() {
+    if (shelter == 0) {
+        shelter = 1;
+        printf("Siginak bulundu!\n");
+    } else {
+        printf("Zaten siginaginiz var.\n");
+    }
+    showStatus();
+}
+
+// Envanteri gösterme fonksiyonu
+void inventory() {
+    printf("Envanter -> Yemek:%d, Siginak:%s\n", food, shelter ? "Var" : "Yok");
+    showStatus();
+}
+
+// Dinlenme fonksiyonu
+void rest() {
+    energy += 15;
+    if (energy > 100) energy = 100;
+
+    health += 10;
+    if (health > 100) health = 100;
+
+    if (food > 0) {
+        food--;
+        printf("Dinlendiniz ve yemek yediniz. Enerji +15, Saglik +10, Yemek -1\n");
+    } else {
+        printf("Dinlendiniz ama yemek yok. Enerji +15, Saglik +10\n");
+    }
+    showStatus();
+}
+
+// Tehlike dalgası fonksiyonu (FOR döngüsü)
+void dangerWave() {
+    printf("Tehlike dalgasi basladi!\n");
+    for (int i = 1; i <= 5; i++) {
+        health -= 5;
+        energy -= 5;
+        printf("Tur %d: Saglik -5, Enerji -5\n", i);
+        if (health <= 0) {
+            printf("Karakteriniz oldu!\n");
+            break;
+        }
+    }
+    showStatus();
+}
+
+// Şifreli ilerleme fonksiyonu (DO-WHILE)
+void passwordGate() {
+    char input;
+    printf("Sifreli kapidan gecmek icin 'K' girin.\n");
+    do {
+        printf("Sifre girin: ");
+        scanf(" %c", &input);
+    } while (input != 'K');
+    printf("Dogru sifre! Engel asildi.\n");
+    showStatus();
+}
+
+int main() {
+    char command;
+
+    printf("Hayatta Kalma Simulatore Hosgeldiniz!\n");
+    printf("Komutlar: A(Avlan), S(Siginak ara), E(Envanter), R(Dinlen), F(Tehlike), P(Sifreli ilerleme), X(Cikis)\n");
+
+    // Komut dinleme döngüsü (do-while)
+    do {
+        printf("\nKomut girin: ");
+        scanf(" %c", &command);
+
+        switch(command) {
+            case 'A': hunt(); break;
+            case 'S': findShelter(); break;
+            case 'E': inventory(); break;
+            case 'R': rest(); break;
+            case 'F': dangerWave(); break;
+            case 'P': passwordGate(); break;
+            case 'X': printf("Cikis yapildi.\n"); break;
+            default: printf("Bilinmeyen komut!\n"); break;
+        }
+
+        if (health <= 0) {
+            printf("Sagliginiz 0 oldu. Oyun bitti.\n");
+            command = 'X';
+        }
+
+    } while(command != 'X');
+
+    printf("Simulasyon sona erdi.\n");
+    return 0;
+}
